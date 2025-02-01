@@ -1,27 +1,83 @@
 import adsk.core, adsk.fusion, adsk.cam, math, traceback
 
+def get_user_parameters(ui):
+    try:
+        # Create input fields using Fusion's input dialogs
+        result = ui.inputBox('Enter number of turns', 'Turns', '5')
+        if result[1]:  # User clicked Cancel
+            return None
+        turns = result[0]
+        
+        result = ui.inputBox('Enter points per turn', 'Points per Turn', '30')
+        if result[1]:
+            return None
+        points_per_turn = result[0]
+        
+        result = ui.inputBox('Enter start radius (mm)', 'Start Radius', '5.0')
+        if result[1]:
+            return None
+        start_radius = result[0]
+        
+        result = ui.inputBox('Enter end radius (mm)', 'End Radius', '10.0')
+        if result[1]:
+            return None
+        end_radius = result[0]
+        
+        result = ui.inputBox('Enter start pitch (mm/turn)', 'Start Pitch', '2.0')
+        if result[1]:
+            return None
+        start_pitch = result[0]
+        
+        result = ui.inputBox('Enter end pitch (mm/turn)', 'End Pitch', '5.0')
+        if result[1]:
+            return None
+        end_pitch = result[0]
+        
+        result = ui.inputBox('Enter wire diameter (mm)', 'Wire Diameter', '1.3')
+        if result[1]:
+            return None
+        wire_diameter = result[0]
+        
+        # Return the parameters as a dictionary with proper type conversion
+        return {
+            'turns': int(float(turns)),
+            'points_per_turn': int(float(points_per_turn)),
+            'start_radius': float(start_radius),
+            'end_radius': float(end_radius),
+            'start_pitch': float(start_pitch),
+            'end_pitch': float(end_pitch),
+            'wire_diameter': float(wire_diameter)
+        }
+        
+    except:
+        if ui:
+            ui.messageBox('Failed to get user parameters:\n{}'.format(traceback.format_exc()))
+        return None
+
 def run(context):
     ui = None
     try:
         app = adsk.core.Application.get()
         ui = app.userInterface
-        # Zugriff auf Fusion 360
+        
+        # Get user parameters
+        params = get_user_parameters(ui)
+        if not params:
+            return
+            
+        # Get the design references
         design = adsk.fusion.Design.cast(app.activeProduct)
         rootComp = design.rootComponent
 
-
-        # ---------------------------------------------------
-        # Parameter für den progressiven Coil
-        # ---------------------------------------------------
-        turns = 5
-        points_per_turn = 30
-        total_points = turns * points_per_turn + 1
-
-        start_radius = 5.0   # z. B. 5 mm
-        end_radius   = 10.0  # z. B. 10 mm (progressiv größer)
-        start_pitch  = 2.0   # Erhöht auf 2.0 mm/Umdrehung um Selbstüberschneidung zu vermeiden
-        end_pitch    = 5.0   # Endsteigung (mm/Umdrehung)
-        wire_diameter = 1.3  # Reduziert auf 0.3 mm Durchmesser
+        # Use the parameters from user input
+        turns = params['turns']
+        points_per_turn = params['points_per_turn']
+        total_points = int(turns * points_per_turn + 1)  # Ensure total_points is an integer
+        start_radius = params['start_radius']
+        end_radius = params['end_radius']
+        start_pitch = params['start_pitch']
+        end_pitch = params['end_pitch']
+        wire_diameter = params['wire_diameter']
 
         # ---------------------------------------------------
         # 1. Erzeuge eine Liste von Point3D-Objekten für die Helix
