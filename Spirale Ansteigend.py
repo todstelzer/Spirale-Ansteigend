@@ -75,8 +75,8 @@ def run(context):
         total_points = int(turns * points_per_turn + 1)  # Ensure total_points is an integer
         start_radius = params['start_radius'] / 10.0  # Convert mm to cm
         end_radius = params['end_radius'] / 10.0      # Convert mm to cm
-        start_pitch = params['start_pitch']
-        end_pitch = params['end_pitch']
+        start_pitch = params['start_pitch'] / 10.0  # Convert mm to cm
+        end_pitch = params['end_pitch'] / 10.0      # Convert mm to cm
         wire_diameter = params['wire_diameter'] / 10.0  # Convert mm to cm
 
         # ---------------------------------------------------
