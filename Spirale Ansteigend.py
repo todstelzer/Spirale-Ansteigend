@@ -73,11 +73,11 @@ def run(context):
         turns = params['turns']
         points_per_turn = params['points_per_turn']
         total_points = int(turns * points_per_turn + 1)  # Ensure total_points is an integer
-        start_radius = params['start_radius']
-        end_radius = params['end_radius']
+        start_radius = params['start_radius'] / 10.0  # Convert mm to cm
+        end_radius = params['end_radius'] / 10.0      # Convert mm to cm
         start_pitch = params['start_pitch']
         end_pitch = params['end_pitch']
-        wire_diameter = params['wire_diameter']
+        wire_diameter = params['wire_diameter'] / 10.0  # Convert mm to cm
 
         # ---------------------------------------------------
         # 1. Erzeuge eine Liste von Point3D-Objekten für die Helix
